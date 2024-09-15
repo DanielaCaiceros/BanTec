@@ -1,12 +1,110 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Tienda de Canje</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>canjearrrr</h1>
+
+    <h1>Tienda de Canje</h1>
+    <p id="saldo">Cargando tu saldo...</p>
+
+    <div id="productos-container" class="productos-container">
+        <!-- Las cartas de productos se cargarán aquí -->
+    </div>
+
+    <p id="mensaje"></p>
+
+    <script>
+        const idAlumno = 1; // Reemplaza con el ID dinámico del alumno actual
+
+        // Función para cargar los productos
+        function cargarProductos() {
+            fetch('/productos')
+                .then(response => response.json())
+                .then(data => {
+                    const productosContainer = document.getElementById('productos-container');
+                    productosContainer.innerHTML = ''; // Limpiar productos anteriores
+
+                    data.forEach(producto => {
+                        const productoCard = document.createElement('div');
+                        productoCard.classList.add('producto-card');
+
+                        productoCard.innerHTML = `
+                            <h3>${producto.nombre}</h3>
+                            <p>Precio: ${producto.precio} monedas</p>
+                            <button onclick="comprarProducto(${producto.id_producto}, '${producto.nombre}', ${producto.precio})">Comprar</button>
+                        `;
+                        productosContainer.appendChild(productoCard);
+                    });
+                })
+                .catch(error => console.error('Error al cargar los productos:', error));
+        }
+
+        // Función para obtener el saldo del alumno
+        function obtenerSaldo() {
+            fetch(`/dinero/${idAlumno}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('saldo').textContent = `Saldo actual: ${data.dinero} monedas`;
+                })
+                .catch(error => console.error('Error al obtener el saldo:', error));
+        }
+
+        // Función para comprar un producto
+        function comprarProducto(idProducto, nombreProducto, precioProducto) {
+            fetch('/comprar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id_alumno: idAlumno, id_producto: idProducto })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('mensaje').textContent = data.error;
+                } else {
+                    document.getElementById('mensaje').textContent = `Compra de ${nombreProducto} realizada con éxito!`;
+
+                    // Mostrar alerta con el saldo restante
+                    alert(`Compra realizada con éxito. Saldo restante: ${data.nuevoSaldo} monedas`);
+
+                    // Actualizar el saldo en pantalla inmediatamente
+                    document.getElementById('saldo').textContent = `Saldo actual: ${data.nuevoSaldo} monedas`;
+
+                    // Agregar resumen de la transacción en la página de inicio
+                    agregarResumenTransaccion(nombreProducto, precioProducto, data.nuevoSaldo);
+                }
+            })
+            .catch(error => console.error('Error al realizar la compra:', error));
+        }
+
+        // Función para agregar un resumen de la transacción en el localStorage
+        function agregarResumenTransaccion(producto, precio, saldoRestante) {
+            const transaccion = {
+                producto,
+                precio,
+                saldoRestante,
+                fecha: new Date().toLocaleString()
+            };
+
+            // Obtener transacciones existentes en el localStorage
+            const transacciones = JSON.parse(localStorage.getItem('transacciones')) || [];
+
+            // Agregar la nueva transacción
+            transacciones.push(transaccion);
+
+            // Guardar las transacciones actualizadas en el localStorage
+            localStorage.setItem('transacciones', JSON.stringify(transacciones));
+        }
+
+        // Ejecutar las funciones al cargar la página
+        window.onload = function() {
+            obtenerSaldo();
+            cargarProductos();
+        }
+    </script>
+
 </body>
 </html>

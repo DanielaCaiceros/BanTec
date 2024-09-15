@@ -10,44 +10,73 @@
     <h1>Simulación de Módulos</h1>
 
     <div class="container">
+        <!-- Módulo 1 -->
         <div class="card" id="module-1">
             <h2>Módulo 1</h2>
             <p>Texto del Módulo 1</p>
             <button onclick="goToModule(1)">Ir al Módulo 1</button>
         </div>
 
+        <!-- Módulo 2 -->
         <div class="card locked" id="module-2">
             <h2>Módulo 2</h2>
             <p>Texto del Módulo 2</p>
             <button onclick="goToModule(2)" disabled>Ir al Módulo 2</button>
         </div>
 
+        <!-- Módulo 3 -->
         <div class="card locked" id="module-3">
             <h2>Módulo 3</h2>
             <p>Texto del Módulo 3</p>
             <button onclick="goToModule(3)" disabled>Ir al Módulo 3</button>
         </div>
 
-        <div class="card locked" id="module-4">
-            <h2>Módulo 4</h2>
-            <p>Texto del Módulo 4</p>
-            <button onclick="goToModule(4)" disabled>Ir al Módulo 4</button>
-        </div>
+        <!-- Añadir más módulos según sea necesario -->
 
-        <div class="card locked" id="module-5">
-            <h2>Módulo 5</h2>
-            <p>Texto del Módulo 5</p>
-            <button onclick="goToModule(5)" disabled>Ir al Módulo 5</button>
-        </div>
     </div>
+            <!-- Barra inferior -->
+            <div class="bottom-bar">
+                <a href="homepage.html">Home Screen</a>
+                <a href="simulacion.html">Simulación</a>
+                <a href="canjear.html">Canjear</a>
+            </div>
 
-        <!-- Barra inferior -->
-        <div class="bottom-bar">
-            <a href="homepage.html">Home Screen</a>
-            <a href="simulacion.html">Simulación</a>
-            <a href="canjear.html">Canjear</a>
-        </div>
+    <script>
+        const idAlumno = 1; // Reemplazar con el id del alumno actual
 
-    <script src="simulacion.js"></script>
+        // Función para ir a un módulo específico
+        function goToModule(moduleNumber) {
+            window.location.href = `module.html?module=${moduleNumber}`;
+        }
+
+        // Obtener el progreso de los módulos
+        fetch(`/progreso/${idAlumno}`)
+            .then(response => response.json())
+            .then(data => {
+                let maxModulo = 0;
+                
+                // Desbloquear los módulos completados
+                data.forEach(modulo => {
+                    const moduleCard = document.getElementById(`module-${modulo.modulo}`);
+                    if (moduleCard) {
+                        moduleCard.classList.remove('locked');
+                        moduleCard.querySelector('button').disabled = false;
+                    }
+
+                    // Encontrar el módulo más alto completado
+                    if (modulo.modulo > maxModulo) {
+                        maxModulo = modulo.modulo;
+                    }
+                });
+
+                // Desbloquear el siguiente módulo
+                const nextModuleCard = document.getElementById(`module-${maxModulo + 1}`);
+                if (nextModuleCard) {
+                    nextModuleCard.classList.remove('locked');
+                    nextModuleCard.querySelector('button').disabled = false;
+                }
+            })
+            .catch(error => console.error('Error al obtener el progreso:', error));
+    </script>
 </body>
 </html>

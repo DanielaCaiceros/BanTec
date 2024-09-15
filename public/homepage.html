@@ -1,65 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homepage</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 100vh;
-        }
-
-        h1 {
-            text-align: center;
-            margin-top: 50px;
-        }
-
-        /* Barra de navegación fija abajo */
-        .bottom-bar {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background-color: #007bff;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .bottom-bar a {
-            text-decoration: none;
-            color: white;
-            font-size: 16px;
-            text-align: center;
-            width: 100px;
-            padding: 10px;
-            border-radius: 8px;
-            background-color: #0056b3;
-            transition: background-color 0.3s ease;
-        }
-
-        .bottom-bar a:hover {
-            background-color: #003d80;
-        }
-    </style>
+    <title>Página de Inicio</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <h1>Homepage !!</h1>
+    <h1>Bienvenido a BanTec</h1>
 
-    <!-- Barra inferior -->
-    <div class="bottom-bar">
-        <a href="homepage.html">Home Screen</a>
-        <a href="simulacion.html">Simulación</a>
-        <a href="canjear.html">Canjear</a>
+    <!-- Mostrar saldo del usuario -->
+    <h2>Saldo Actual: <span id="saldo">Cargando...</span> monedas</h2>
+
+    <!-- Resumen de transacciones -->
+    <h2>Resumen de Transacciones</h2>
+
+    <div id="transacciones-container">
+        <!-- Aquí se cargarán las transacciones -->
     </div>
+
+                <!-- Barra inferior -->
+                <div class="bottom-bar">
+                    <a href="homepage.html">Home Screen</a>
+                    <a href="simulacion.html">Simulación</a>
+                    <a href="canjear.html">Canjear</a>
+                </div>
+    <script>
+        const idAlumno = 1; // Reemplaza con el ID dinámico del alumno actual
+
+        // Función para cargar el saldo del alumno
+        function cargarSaldo() {
+            fetch(`/dinero/${idAlumno}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('saldo').textContent = data.dinero; // Mostrar el saldo
+                })
+                .catch(error => console.error('Error al cargar el saldo:', error));
+        }
+
+        // Función para cargar las transacciones del localStorage
+        function cargarTransacciones() {
+            const transacciones = JSON.parse(localStorage.getItem('transacciones')) || [];
+
+            const transaccionesContainer = document.getElementById('transacciones-container');
+            transaccionesContainer.innerHTML = ''; // Limpiar transacciones previas
+
+            if (transacciones.length === 0) {
+                transaccionesContainer.textContent = 'No hay transacciones recientes.';
+                return;
+            }
+
+            // Crear un resumen de cada transacción
+            transacciones.forEach(transaccion => {
+                const transaccionElement = document.createElement('div');
+                transaccionElement.classList.add('transaccion-resumen');
+
+                transaccionElement.innerHTML = `
+                    <p>Producto: ${transaccion.producto}</p>
+                    <p>Precio: ${transaccion.precio} monedas</p>
+                    <p>Saldo restante: ${transaccion.saldoRestante} monedas</p>
+                    <p>Fecha: ${transaccion.fecha}</p>
+                    <hr>
+                `;
+                transaccionesContainer.appendChild(transaccionElement);
+            });
+        }
+
+        // Cargar el saldo y las transacciones al cargar la página
+        window.onload = function() {
+            cargarSaldo();
+            cargarTransacciones();
+        };
+    </script>
 
 </body>
 </html>
