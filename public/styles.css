@@ -1,0 +1,72 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5;
+}
+
+.transaccion-resumen {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+}
+
+.transaccion-resumen p {
+    margin: 5px 0;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #ddd;
+}
+
+ 
+h1 {
+    text-align: center;
+    margin-top: 20px;
+    color: #333;
+}
+
+.container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin: 20px;
+}
+
+.card {
+    background-color: #ffffff;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 200px;
+    text-align: center;
+}
+
+.locked {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+button {
+    margin-top: 10px;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button[disabled] {
+    background-color: gray;
+    cursor: not-allowed;
+}
+
+button:hover:not([disabled]) {
+    background-color: #0056b3;
+}

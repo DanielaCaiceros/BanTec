@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Inicio</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <h1>Bienvenido a BanTec</h1>
+
+    <!-- Mostrar saldo del usuario -->
+    <h2>Saldo Actual: <span id="saldo">Cargando...</span> monedas</h2>
+
+    <!-- Resumen de transacciones -->
+    <h2>Resumen de Transacciones</h2>
+
+    <div id="transacciones-container">
+        <!-- Aquí se cargarán las transacciones -->
+    </div>
+
+                <!-- Barra inferior -->
+                <div class="bottom-bar">
+                    <a href="homepage.html">Home Screen</a>
+                    <a href="simulacion.html">Simulación</a>
+                    <a href="canjear.html">Canjear</a>
+                </div>
+    <script>
+        const idAlumno = 1; // Reemplaza con el ID dinámico del alumno actual
+
+        // Función para cargar el saldo del alumno
+        function cargarSaldo() {
+            fetch(`/dinero/${idAlumno}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('saldo').textContent = data.dinero; // Mostrar el saldo
+                })
+                .catch(error => console.error('Error al cargar el saldo:', error));
+        }
+
+        // Función para cargar las transacciones del localStorage
+        function cargarTransacciones() {
+            const transacciones = JSON.parse(localStorage.getItem('transacciones')) || [];
+
+            const transaccionesContainer = document.getElementById('transacciones-container');
+            transaccionesContainer.innerHTML = ''; // Limpiar transacciones previas
+
+            if (transacciones.length === 0) {
+                transaccionesContainer.textContent = 'No hay transacciones recientes.';
+                return;
+            }
+
+            // Crear un resumen de cada transacción
+            transacciones.forEach(transaccion => {
+                const transaccionElement = document.createElement('div');
+                transaccionElement.classList.add('transaccion-resumen');
+
+                transaccionElement.innerHTML = `
+                    <p>Producto: ${transaccion.producto}</p>
+                    <p>Precio: ${transaccion.precio} monedas</p>
+                    <p>Saldo restante: ${transaccion.saldoRestante} monedas</p>
+                    <p>Fecha: ${transaccion.fecha}</p>
+                    <hr>
+                `;
+                transaccionesContainer.appendChild(transaccionElement);
+            });
+        }
+
+        // Cargar el saldo y las transacciones al cargar la página
+        window.onload = function() {
+            cargarSaldo();
+            cargarTransacciones();
+        };
+    </script>
+
+</body>
+</html>
