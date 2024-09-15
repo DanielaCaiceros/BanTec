@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contenido del Módulo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1 id="module-title">Módulo X</h1>
+    <p id="module-content">Este es el contenido del módulo seleccionado.</p>
+    <button onclick="goToQuestionnaire()">Ir al Cuestionario</button>
+
+    <script>
+        // Obtener el módulo actual de la URL
+        const params = new URLSearchParams(window.location.search);
+        const moduleNumber = params.get('module');
+
+        // Establecer el título y contenido del módulo
+        document.getElementById('module-title').textContent = `Módulo ${moduleNumber}`;
+        document.getElementById('module-content').textContent = `Este es el contenido del Módulo ${moduleNumber}.`;
+
+        function goToQuestionnaire() {
+            // Redirigir a la página del cuestionario
+            window.location.href = `questionnaire.html?module=${moduleNumber}`;
+        }
+    </script>
+</body>
+</html>

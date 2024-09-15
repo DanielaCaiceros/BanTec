@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Cuestionario del Módulo</h1>
+    <p>Responde la pregunta para continuar al siguiente módulo.</p>
+
+    <form id="questionnaire-form" onsubmit="return submitQuestionnaire(event)">
+        <label>¿Cuál es la capital de Francia?</label><br>
+        <input type="text" id="answer" required><br>
+        <button type="submit">Enviar</button>
+    </form>
+    <p id="feedback"></p>
+
+    <script>
+        // Obtener el módulo actual de la URL
+        const params = new URLSearchParams(window.location.search);
+        const moduleNumber = params.get('module');
+        let currentModule = parseInt(moduleNumber);
+
+        function submitQuestionnaire(event) {
+            event.preventDefault();
+            const answer = document.getElementById('answer').value.trim().toLowerCase();
+            const feedback = document.getElementById('feedback');
+            
+            if (answer === 'paris') {
+                feedback.textContent = "Correcto. Volviendo a la simulación.";
+                setTimeout(() => {
+                    // Redirigir de vuelta a la página de simulación y desbloquear el siguiente módulo
+                    window.location.href = `simulacion.html?completed=${currentModule}`;
+                }, 2000);
+            } else {
+                feedback.textContent = "Respuesta incorrecta. Intenta de nuevo.";
+            }
+        }
+    </script>
+</body>
+</html>
+

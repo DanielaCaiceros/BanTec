@@ -3,7 +3,7 @@ const path = require('path');
 const { Pool } = require('pg'); // Importa el módulo pg
 
 const app = express();
-const PORT = 3001;
+const PORT = 3006;
 
 // Middleware para procesar el cuerpo de las solicitudes POST (para datos JSON o form-data)
 app.use(express.json());
@@ -61,7 +61,26 @@ pool.connect((err, client, release) => {
   app.get('/homepage.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'homepage.html'));
   });
+
   
+// Ruta para obtener las preguntas y respuestas de un módulo específico
+app.get('/preguntas/:modulo', async (req, res) => {
+    const modulo = req.params.modulo;
+  
+    try {
+      const result = await pool.query(`
+        SELECT p.id_pregunta, p.pregunta, r.id_respuesta, r.respuesta, r.esCorrecta
+        FROM preguntas p
+        JOIN respuestas r ON p.id_pregunta = r.id_pregunta
+        WHERE p.modulo = $1
+      `, [modulo]);
+  
+      res.json(result.rows); // Devuelve las preguntas y respuestas en formato JSON
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Error al obtener preguntas');
+    }
+  });
   // Escuchar en el puerto definido
   app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
